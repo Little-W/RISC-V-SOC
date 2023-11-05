@@ -1,2 +1,5 @@
 .*
 *.tar*
+build/
+wave.gtkw
+compile.flg
