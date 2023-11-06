@@ -6,7 +6,6 @@
     input [`AHB_BUS_WIDTH-1:0] HADDR_i,
     input [15:0] HBUSREQ_i,
     input [15:0] HLOCK_i,
-    input [15:0] HSPLIT_i [15:0],
     input HREADY_i,
     input HRESP_i,
     input [2:0] HBURST_i,
@@ -27,8 +26,7 @@
     end
     wire [31:0] HGRANT_extended;
     assign HGRANT_extended = {HBUSREQ_i,HBUSREQ_i} & ~({HBUSREQ_i,HBUSREQ_i} - prior_master);
-    //assign HGRANT_o = HGRANT_extended[31:16] | HGRANT_extended[15:0];
-    // assign HLOCKMASTER_o = 1 && (HGRANT_o & HLOCK_i);
+    
     always_comb begin
 
         if(HADDR_i[10:0] == 0 && HADDR_i && HTRANS_i == `TRANS_SEQ) begin

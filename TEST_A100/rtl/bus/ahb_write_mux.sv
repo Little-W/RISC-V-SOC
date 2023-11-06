@@ -21,6 +21,16 @@ module ahb_write_mux(
   output reg  HWRITE_o
 );
   reg [3:0] HMASTER_buf;
+
+  always_ff @(posedge HCLK or negedge HRST_N) begin
+      if(!HRST_N) begin
+          HMASTER_buf <= 0;
+      end
+      else if(HREADY_i == 1) begin
+          HMASTER_buf <= HMASTER_i;
+      end
+  end
+
   always_comb begin
     case (HMASTER_i)
       4'b0000: 
@@ -239,15 +249,6 @@ module ahb_write_mux(
       end
       default: ;
     endcase
-  end
-
-  always_ff @(posedge HCLK or negedge HRST_N) begin
-      if(!HRST_N) begin
-          HMASTER_buf <= 0;
-      end
-      else if(HREADY_i == 1) begin
-          HMASTER_buf <= HMASTER_i;
-      end
   end
 
 endmodule 

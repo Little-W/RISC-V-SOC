@@ -12,7 +12,7 @@
  );
    reg [`AHB_BUS_WIDTH-1:0] addr_buf;
 
-   always @(posedge HCLK or negedge HRST_N) begin
+   always_ff @(posedge HCLK or negedge HRST_N) begin
       if(!HRST_N) begin
          addr_buf <= 0;
       end
@@ -20,7 +20,7 @@
          addr_buf <= HADDR_i;
       end
    end
-   always @(*) begin
+   always_comb begin
       case (addr_buf[31:28])  //数总线交接晚一拍
          4'b0000: begin
             HRDATA_o = HRDATA_i[0];

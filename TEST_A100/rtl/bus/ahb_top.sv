@@ -22,7 +22,6 @@ module ahb_top(
     wire [`AHB_BUS_WIDTH-1:0] HADDR_ALL [15:0];
     wire [`AHB_BUS_WIDTH-1:0] HRDATA_ALL [15:0];
     wire [`AHB_BUS_WIDTH-1:0] HWDATA_ALL [15:0];
-    wire [15:0] HSPLIT_ALL [15:0];
     wire [15:0] HSEL_ALL;
 
     wire HBUSREQ;
@@ -100,8 +99,7 @@ module ahb_top(
         .HREADY_i(HREADY),
         .HRDATA_o(HRDATA_ALL[0]),
         .HREADY_o(HREADY_ALL[0]),
-        .HRESP_o(HRESP_ALL[0]),
-        .HSPLIT_o(HSPLIT_ALL[0])
+        .HRESP_o(HRESP_ALL[0])
     );
     ahb_slave slave1(
         .HCLK(clk),               // 时钟信号
@@ -117,8 +115,7 @@ module ahb_top(
         .HREADY_i(HREADY),       // 准备好信号输入
         .HRDATA_o(HRDATA_ALL[1]),  // 读取数据输出
         .HREADY_o(HREADY_ALL[1]), // 准备好信号输出
-        .HRESP_o(HRESP_ALL[1]),     // 响应信号输出
-        .HSPLIT_o(HSPLIT_ALL[1])
+        .HRESP_o(HRESP_ALL[1])     // 响应信号输出
     );
     ahb_arbiter ahb_arbiter (
         .HRST_N(rst_n),
@@ -126,7 +123,6 @@ module ahb_top(
         .HADDR_i(HADDR),
         .HBUSREQ_i(HBUSREQ_ALL),
         .HLOCK_i(HLOCK_ALL),
-        .HSPLIT_i(HSPLIT_ALL),
         .HREADY_i(HREADY),
         .HRESP_i(HRESP),
         .HBURST_i(HBURST),

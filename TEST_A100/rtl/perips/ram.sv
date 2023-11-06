@@ -12,11 +12,11 @@ module ram(
     );
     reg[7:0] ram_regs [`RAM_SIZE-1 : 0];
     reg [21:0] addr_buf; 
-    // initial begin
-    //     write_okay = 1;
-    // end
     always_ff @(posedge clk or negedge enable) begin
-        if (enable == 1'b1 && write == 1'b1) begin
+        if(!enable) begin
+            write_okay <= 0;
+        end
+        else if (write == 1'b1) begin
             ram_regs[addr_i[23:2]] <= data_i;
             if(write_okay)
             begin
@@ -29,7 +29,10 @@ module ram(
     end
 
     always_comb begin
-        if (enable == 1'b1 && write == 1'b0) begin
+        if(!enable) begin
+            data_o = 0;
+        end
+        else if (write == 1'b0) begin
             data_o = ram_regs[addr_i[23:2]];
         end else begin
             data_o = 8'h0;

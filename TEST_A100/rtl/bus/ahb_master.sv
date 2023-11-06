@@ -20,24 +20,10 @@
     output reg HBUSREQ_o,
     output reg okay,
     output reg [7:0] receive [511:0]
-    // output reg [`AHB_BUS_WIDTH-1:0] dout//master--->top 将从slave读入的数据输出 
     );
-
-  // assign HWDATA_o = en_hwdata ? HWDATA : 'bz;
-  // assign HADDR_o = en_haddr ? HADDR : 'bz;
-  // assign HWRITE_o = en_hwrite ? HWRITE : 'bz;
-  // assign HSIZE_o = en_hsize ? HSIZE : 'bz;
-
-  // reg [`AHB_BUS_WIDTH-1:0] HADDR;
-  // reg [`AHB_BUS_WIDTH-1:0] HWDATA;
-  // reg HWRITE;
-  // reg [2:0] HSIZE;
-  // reg en_hwdata,en_haddr,en_hwrite,en_hsize;
 
   reg [7:0] storage [511:0];
   reg [8:0] storage_pointer;
-  // reg [7:0] receive [511:0];
-
   reg [`AHB_BUS_WIDTH-1:0] addr;
   reg [2:0] test_step;
   reg [8:0] cnt;
@@ -51,21 +37,29 @@
   reg write_test_en;
   reg read_test_en;
 
-  always @(posedge HCLK or negedge HRST_N) begin
+  always_ff @(posedge HCLK or negedge HRST_N) begin
     if(!HRST_N) begin
       HADDR_o <= 32'h0000_0000;
-      // en_hwdata <= 1'b0;
-      // en_haddr <= 1'b0;
-      // en_hwrite <= 1'b0;
-      // en_hsize <= 1'b0;
       HWDATA_o <= 32'h0000_0000;
       HTRANS_o <= `TRANS_IDLE;
-      write_test_en <= 1;
+      write_test_en <= 0;
       read_test_en <= 0;
+      test_step <= 0;
+      cnt <= 0;
+      cnt_2 <= 0;
+      busy_cnt <= 0;
+      read_data_from_slave <= 0;
+      write_data_to_slave <= 0;
+      error_resp_test_addr <= 0;
+      error_handle <= 0;
+      HGRANT_buf_1 <= 0;
+      addr_buf_1 <= 0;
+      addr_buf_2 <= 0;
     end
     else begin
       if(!start) begin
         addr <= tgt_addr;
+        write_test_en <= 1;
         error_resp_test_addr <= (tgt_addr | `TOTAL_RAM_SIZE) + 1;
         storage[storage_pointer] <= din[7:0];
         storage[storage_pointer+1] <= din[15:8];
@@ -269,6 +263,7 @@
 
       if(addr_buf_1 > tgt_addr + storage_pointer && write_test_en) begin
         write_test_en <= 0;
+        write_data_to_slave <= 0;
         addr <= tgt_addr;
         addr_buf_1 <= 0;
         addr_buf_2 <= 0;
@@ -281,7 +276,7 @@
     end
   end
 
-  always @(posedge HCLK or negedge HRST_N) begin
+  always_ff @(posedge HCLK or negedge HRST_N) begin
 
     if(!HRST_N) begin
         error_resp_tested <= 0;

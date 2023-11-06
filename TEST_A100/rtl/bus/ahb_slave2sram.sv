@@ -13,8 +13,7 @@ module ahb_slave(
   input HREADY_i,
   output reg [`AHB_BUS_WIDTH-1:0] HRDATA_o,
   output reg  HREADY_o,
-  output reg  HRESP_o,
-  output reg [15:0] HSPLIT_o
+  output reg  HRESP_o
   );
   
   reg [7:0] data_i [3:0];
@@ -357,6 +356,13 @@ module ahb_slave(
     if(!HRST_N) begin
       HRESP_o <= `RESP_OKAY;
       HREADY_seq <= 1;
+      HTRANS_buf <= 0;
+      HSIZE_buf <= 0;
+      HWDATA_buf <= 0;
+      HTRANS_buf <= 0;
+      HBURST_buf <= 0;
+      HPROT_buf <= 0;
+      HWRITE_buf <= 0;
     end
     else if(HSEL) begin
       if(HTRANS_i != `TRANS_IDLE) begin
